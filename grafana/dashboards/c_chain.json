@@ -221,7 +221,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "rate({__name__=~\"avalanche_evm_(transition_)?sae_executed_gas_charged_total\", chain=\"$chain\"}[1m]) / 1e6",
+          "expr": "(rate(avalanche_evm_sae_executed_gas_charged_total{chain=\"$chain\"}[1m]) or rate(avalanche_evm_transition_sae_executed_gas_charged_total{chain=\"$chain\"}[1m])) / 1e6",
           "legendFormat": "Charged {{node_id}}",
           "range": true,
           "refId": "A"
@@ -231,7 +231,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "rate({__name__=~\"avalanche_evm_(transition_)?sae_executed_gas_limit_total\", chain=\"$chain\"}[1m]) / 1e6",
+          "expr": "(rate(avalanche_evm_sae_executed_gas_limit_total{chain=\"$chain\"}[1m]) or rate(avalanche_evm_transition_sae_executed_gas_limit_total{chain=\"$chain\"}[1m])) / 1e6",
           "legendFormat": "Executed gas limit {{node_id}}",
           "range": true,
           "refId": "B"
@@ -241,7 +241,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "rate({__name__=~\"avalanche_evm_(transition_)?sae_accepted_gas_limit_total\", chain=\"$chain\"}[1m]) / 1e6",
+          "expr": "(rate(avalanche_evm_sae_accepted_gas_limit_total{chain=\"$chain\"}[1m]) or rate(avalanche_evm_transition_sae_accepted_gas_limit_total{chain=\"$chain\"}[1m])) / 1e6",
           "legendFormat": "Accepted gas limit {{node_id}}",
           "range": true,
           "refId": "C"
@@ -251,10 +251,20 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_gas_target\", chain=\"$chain\"} / 1e6",
+          "expr": "(avalanche_evm_sae_gas_target{chain=\"$chain\"} or avalanche_evm_transition_sae_gas_target{chain=\"$chain\"}) / 1e6",
           "legendFormat": "Target {{node_id}}",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "avalanche_evm_sae_tau_second_avg_executed_gas_per_second{chain=\"$chain\"} / 1e6",
+          "legendFormat": "Executed, tau-second avg (v1.15.2+) {{node_id}}",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Gas Throughput (MGas/s)",
@@ -348,7 +358,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "rate({__name__=~\"avalanche_evm_(transition_)?sae_execute_block_duration_seconds_sum\", chain=\"$chain\"}[5m]) / rate({__name__=~\"avalanche_evm_(transition_)?sae_execute_block_duration_seconds_count\", chain=\"$chain\"}[5m])",
+          "expr": "(rate(avalanche_evm_sae_execute_block_duration_seconds_sum{chain=\"$chain\"}[5m]) or rate(avalanche_evm_transition_sae_execute_block_duration_seconds_sum{chain=\"$chain\"}[5m])) / (rate(avalanche_evm_sae_execute_block_duration_seconds_count{chain=\"$chain\"}[5m]) or rate(avalanche_evm_transition_sae_execute_block_duration_seconds_count{chain=\"$chain\"}[5m]))",
           "legendFormat": "Average {{node_id}}",
           "range": true,
           "refId": "A"
@@ -358,7 +368,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "histogram_quantile(0.95, rate({__name__=~\"avalanche_evm_(transition_)?sae_execute_block_duration_seconds_bucket\", chain=\"$chain\"}[5m]))",
+          "expr": "histogram_quantile(0.95, (rate(avalanche_evm_sae_execute_block_duration_seconds_bucket{chain=\"$chain\"}[5m]) or rate(avalanche_evm_transition_sae_execute_block_duration_seconds_bucket{chain=\"$chain\"}[5m])))",
           "legendFormat": "p95 {{node_id}}",
           "range": true,
           "refId": "B"
@@ -455,7 +465,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "avalanche_snowman_last_accepted_height{chain=\"$chain\"} - {__name__=~\"avalanche_evm_(transition_)?sae_last_executed_height\", chain=\"$chain\"}",
+          "expr": "avalanche_snowman_last_accepted_height{chain=\"$chain\"} - (avalanche_evm_sae_last_executed_height{chain=\"$chain\"} or avalanche_evm_transition_sae_last_executed_height{chain=\"$chain\"})",
           "legendFormat": "Accepted - executed {{node_id}}",
           "range": true,
           "refId": "A"
@@ -465,7 +475,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_last_executed_height\", chain=\"$chain\"} - {__name__=~\"avalanche_evm_(transition_)?sae_last_settled_height\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_last_executed_height{chain=\"$chain\"} or avalanche_evm_transition_sae_last_executed_height{chain=\"$chain\"}) - (avalanche_evm_sae_last_settled_height{chain=\"$chain\"} or avalanche_evm_transition_sae_last_settled_height{chain=\"$chain\"})",
           "legendFormat": "Executed - settled {{node_id}}",
           "range": true,
           "refId": "B"
@@ -562,7 +572,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "histogram_quantile(0.5, rate({__name__=~\"avalanche_evm_(transition_)?sae_execution_queue_duration_seconds_bucket\", chain=\"$chain\"}[5m]))",
+          "expr": "histogram_quantile(0.5, (rate(avalanche_evm_sae_execution_queue_duration_seconds_bucket{chain=\"$chain\"}[5m]) or rate(avalanche_evm_transition_sae_execution_queue_duration_seconds_bucket{chain=\"$chain\"}[5m])))",
           "legendFormat": "p50 {{node_id}}",
           "range": true,
           "refId": "A"
@@ -572,7 +582,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "histogram_quantile(0.95, rate({__name__=~\"avalanche_evm_(transition_)?sae_execution_queue_duration_seconds_bucket\", chain=\"$chain\"}[5m]))",
+          "expr": "histogram_quantile(0.95, (rate(avalanche_evm_sae_execution_queue_duration_seconds_bucket{chain=\"$chain\"}[5m]) or rate(avalanche_evm_transition_sae_execution_queue_duration_seconds_bucket{chain=\"$chain\"}[5m])))",
           "legendFormat": "p95 {{node_id}}",
           "range": true,
           "refId": "B"
@@ -668,7 +678,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "rate({__name__=~\"avalanche_evm_(transition_)?sae_execute_block_duration_seconds_count\", chain=\"$chain\"}[1m])",
+          "expr": "(rate(avalanche_evm_sae_execute_block_duration_seconds_count{chain=\"$chain\"}[1m]) or rate(avalanche_evm_transition_sae_execute_block_duration_seconds_count{chain=\"$chain\"}[1m]))",
           "legendFormat": "Blocks executed / s {{node_id}}",
           "range": true,
           "refId": "A"
@@ -765,7 +775,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_execution_queue_blocks\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_execution_queue_blocks{chain=\"$chain\"} or avalanche_evm_transition_sae_execution_queue_blocks{chain=\"$chain\"})",
           "legendFormat": "Queued blocks {{node_id}}",
           "range": true,
           "refId": "A"
@@ -2158,7 +2168,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "suffix: nAVAX"
         },
         "overrides": []
       },
@@ -2189,7 +2200,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_executed_base_fee\", chain=\"$chain\"} / 1e9",
+          "expr": "(avalanche_evm_sae_executed_base_fee{chain=\"$chain\"} or avalanche_evm_transition_sae_executed_base_fee{chain=\"$chain\"}) / 1e9",
           "legendFormat": "Executed {{node_id}}",
           "range": true,
           "refId": "A"
@@ -2199,7 +2210,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_worst_case_base_fee\", chain=\"$chain\"} / 1e9",
+          "expr": "(avalanche_evm_sae_worst_case_base_fee{chain=\"$chain\"} or avalanche_evm_transition_sae_worst_case_base_fee{chain=\"$chain\"}) / 1e9",
           "legendFormat": "Worst case {{node_id}}",
           "range": true,
           "refId": "B"
@@ -2297,7 +2308,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_executed_gas_excess\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_executed_gas_excess{chain=\"$chain\"} or avalanche_evm_transition_sae_executed_gas_excess{chain=\"$chain\"})",
           "legendFormat": "Executed {{node_id}}",
           "range": true,
           "refId": "A"
@@ -2307,7 +2318,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_worst_case_gas_excess\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_worst_case_gas_excess{chain=\"$chain\"} or avalanche_evm_transition_sae_worst_case_gas_excess{chain=\"$chain\"})",
           "legendFormat": "Worst case {{node_id}}",
           "range": true,
           "refId": "B"
@@ -2405,7 +2416,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_gas_time_wall_time_gap_seconds\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_gas_time_wall_time_gap_seconds{chain=\"$chain\"} or avalanche_evm_transition_sae_gas_time_wall_time_gap_seconds{chain=\"$chain\"})",
           "legendFormat": "Gas time - wall time {{node_id}}",
           "range": true,
           "refId": "A"
@@ -2504,7 +2515,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "{__name__=~\"avalanche_evm_(transition_)?sae_in_memory_blocks\", chain=\"$chain\"}",
+          "expr": "(avalanche_evm_sae_in_memory_blocks{chain=\"$chain\"} or avalanche_evm_transition_sae_in_memory_blocks{chain=\"$chain\"})",
           "legendFormat": "In-memory blocks {{node_id}}",
           "range": true,
           "refId": "A"
@@ -2915,6 +2926,114 @@
       ],
       "title": "Average Block Accept Time (ms)",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Factor by which the gas rate could have been multiplied for execution to keep pace with wall-clock time, over a rolling tau window. Below 1 means execution is falling behind. Requires AvalancheGo v1.15.2+.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed"
+            },
+            "axisSoftMin": 0
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "transparent",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "suffix:×"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 109
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "avalanche_evm_sae_execution_gas_rate_headroom_latest{chain=\"$chain\"}",
+          "legendFormat": "Latest {{node_id}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.05, rate(avalanche_evm_sae_execution_gas_rate_headroom_bucket{chain=\"$chain\"}[5m]))",
+          "legendFormat": "p5 {{node_id}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Execution Gas Rate Headroom",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -2957,15 +3076,15 @@
         },
         "name": "chain",
         "options": [],
-        "query": "label_values({__name__=~\"avalanche_evm_(transition_)?sae_last_executed_height\"}, chain)",
-        "refresh": 1,
+        "query": "label_values(avalanche_snowman_last_accepted_height{chain!~\"P|X\"}, chain)",
+        "refresh": 2,
         "type": "query"
       }
     ]
   },
   "time": {
-    "from": "2025-07-03T19:06:18.000Z",
-    "to": "2025-07-03T19:21:18.000Z"
+    "from": "now-1h",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "America/New_York",
